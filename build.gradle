@@ -1,0 +1,53 @@
+import geb.gradle.saucelabs.SauceAccount
+
+description = ''
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.gebish:geb-gradle:3.0.1'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'geb-saucelabs'
+
+group 'geb-sauce-test'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile 'org.gebish:geb-spock:3.0.1'
+    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+    testCompile 'org.seleniumhq.selenium:selenium-support:3.141.59'
+
+    sauceConnect 'com.saucelabs:ci-sauce:1.144'
+}
+
+test {
+    systemProperties 'geb.build.reportsDir': "$reportsDir/geb"
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+sauceLabs {
+    browsers {
+        create('internet explorer') {
+            capabilities(browserName: 'Internet Explorer', platform: 'Windows 7', version: '11')
+        }
+    }
+    account {
+        username = System.getenv(SauceAccount.USER_ENV_VAR)
+        accessKey = System.getenv(SauceAccount.ACCESS_KEY_ENV_VAR)
+    }
+}
